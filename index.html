@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agostino Fiumana — Research &amp; Projects</title>
+<meta name="description" content="Agostino Fiumana — M.Sc. student at Università di Bologna, researcher at Télécom Paris. Network virtualization, digital twins, probabilistic modeling."/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* ── Tokens ─────────────────────────────────────────────── */
+:root {
+  --bg:        #05060e;
+  --bg2:       #080a15;
+  --bg3:       #0d0f1e;
+  --amber:     #ffaa00;
+  --amber-dim: #cc7700;
+  --amber-glow:rgba(255,170,0,0.15);
+  --amber-soft:rgba(255,170,0,0.06);
+  --text:      #e2d5b8;
+  --text-mid:  #8a7a5a;
+  --text-dim:  #3a3020;
+  --rule:      rgba(255,170,0,0.12);
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ── Base ───────────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--amber);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+a:hover { opacity: 0.7; }
+
+::selection { background: var(--amber); color: #000; }
+
+/* ── Scan-line overlay ──────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 3px,
+    rgba(255,170,0,0.018) 3px, rgba(255,170,0,0.018) 4px
+  );
+}
+
+/* ── Hex grid background ────────────────────────────────── */
+.hex-field {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='61'%3E%3Cpolygon points='35,2 67,19 67,42 35,59 3,42 3,19' fill='none' stroke='%23ffaa00' stroke-width='0.6' stroke-opacity='0.1'/%3E%3C/svg%3E");
+  animation: hexdrift 40s linear infinite;
+}
+@keyframes hexdrift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 70px 61px; }
+}
+
+/* ── Page shell ─────────────────────────────────────────── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+}
+
+/* ── Nav ────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(5,6,14,0.88);
+  backdrop-filter: blur(10px);
+  margin: 0 -2rem;
+  padding: 1rem 2rem;
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 0.6rem;
+}
+
+/* hex badge */
+.hex-badge {
+  position: relative; width: 36px; height: 41px; flex-shrink: 0;
+}
+.hex-badge svg { width: 100%; height: 100%; }
+.hex-badge img {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  filter: brightness(10);
+}
+
+.nav-name {
+  font-size: 0.8rem; font-weight: 500;
+  color: #ffaa00; letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex; gap: 1.5rem; list-style: none;
+}
+.nav-links a {
+  font-size: 0.75rem; color: #ffaa00;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  transition: color 0.2s, opacity 0.2s;
+}
+.nav-links a:hover { opacity: 0.6; }
+
+/* ── Hero ───────────────────────────────────────────────── */
+.hero {
+  min-height: 90vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 4rem 0 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* giant eye watermark */
+.eye-watermark {
+  position: absolute; right: -60px; top: 50%;
+  transform: translateY(-50%);
+  width: 420px; opacity: 0.045;
+  filter: brightness(10);
+  pointer-events: none;
+  animation: eyebreath 8s ease-in-out infinite;
+}
+@keyframes eyebreath {
+  0%, 100% { opacity: 0.045; }
+  50%       { opacity: 0.07; }
+}
+
+.hero-tag {
+  font-size: 0.75rem; color: var(--amber);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: rise 0.8s ease-out 0.1s forwards;
+}
+.hero-tag::before { content: '> '; }
+
+.hero-h1 {
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  font-weight: 300;
+  line-height: 0.95;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  animation: rise 0.9s ease-out 0.25s forwards;
+}
+.hero-h1 em {
+  font-style: normal;
+  color: #ffaa00;
+  text-shadow: 0 0 40px rgba(255,170,0,0.5);
+}
+.cursor {
+  display: inline-block; width: 3px; height: 0.85em;
+  background: var(--amber); vertical-align: baseline;
+  margin-left: 4px;
+  animation: blink 1.1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.hero-sub {
+  font-size: 0.95rem; color: var(--text-mid);
+  line-height: 1.8; max-width: 44ch;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: rise 0.9s ease-out 0.4s forwards;
+}
+
+/* data badges row */
+.hero-badges {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+  opacity: 0;
+  animation: rise 0.9s ease-out 0.55s forwards;
+}
+.badge {
+  padding: 0.5rem 0.9rem;
+  background: var(--amber-soft);
+  border: 1px solid var(--rule);
+  font-size: 0.6rem; color: var(--text-mid);
+  letter-spacing: 0.08em;
+  clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.badge:hover { border-color: var(--amber); color: var(--amber); }
+.badge-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--amber);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+/* status strip */
+.status-strip {
+  margin-top: 2rem;
+  padding: 0.75rem 1rem;
+  border-left: 2px solid var(--amber);
+  background: var(--amber-soft);
+  font-size: 0.65rem; color: var(--text-mid);
+  line-height: 1.6;
+  max-width: 52ch;
+  opacity: 0;
+  animation: rise 0.9s ease-out 0.7s forwards;
+}
+.status-strip strong { color: var(--text); font-weight: 500; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section shared ─────────────────────────────────────── */
+section { margin-top: 5rem; scroll-margin-top: 80px; }
+
+.sec-head {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+.sec-hex { width: 16px; height: 18px; flex-shrink: 0; }
+.sec-num { font-size: 0.55rem; color: var(--amber); letter-spacing: 0.15em; }
+.sec-title {
+  font-size: 0.9rem; font-weight: 500;
+  color: var(--text); letter-spacing: 0.12em; text-transform: uppercase;
+}
+.sec-line { flex: 1; height: 1px; background: var(--rule); }
+
+.prose p {
+  font-size: 0.9rem; color: var(--text-mid);
+  line-height: 1.9; max-width: 64ch;
+  margin-bottom: 1rem;
+}
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { color: var(--text); font-weight: 500; }
+
+/* ── Project cards ──────────────────────────────────────── */
+.projects { display: flex; flex-direction: column; gap: 0; }
+
+.project {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 0 1rem;
+  transition: background 0.2s;
+}
+.project:last-child { border-bottom: none; }
+.project:hover { background: rgba(255,170,0,0.02); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
+
+.proj-hex-icon { padding-top: 3px; }
+.proj-hex-icon svg { width: 28px; height: 32px; }
+
+.proj-body {}
+.proj-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem;
+}
+.proj-title {
+  font-size: 1rem; font-weight: 500;
+  color: var(--text);
+}
+.proj-title::before { content: '> '; color: var(--amber); font-weight: 400; }
+.proj-date { font-size: 0.58rem; color: var(--text-dim); }
+
+.proj-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.8; max-width: 62ch; margin-bottom: 0.75rem; }
+
+.tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+.tag {
+  font-size: 0.55rem; color: var(--amber-dim);
+  border: 1px solid rgba(255,170,0,0.2);
+  padding: 0.15rem 0.45rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.proj-links { font-size: 0.68rem; }
+
+/* ── Empty note ─────────────────────────────────────────── */
+.empty-note {
+  padding: 1.25rem;
+  border: 1px dashed rgba(255,170,0,0.15);
+  font-size: 0.72rem; color: var(--text-dim);
+  line-height: 1.8; max-width: 62ch;
+}
+.empty-note::before { content: '// '; color: var(--amber-dim); }
+
+/* ── Contact ────────────────────────────────────────────── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem 2rem;
+}
+.contact-item { display: flex; flex-direction: column; gap: 0.2rem; }
+.contact-label {
+  font-size: 0.55rem; color: var(--amber);
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.contact-item a { font-size: 0.72rem; color: var(--text-mid); }
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer {
+  margin-top: 5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.6rem; color: var(--text-dim);
+  flex-wrap: wrap; gap: 0.5rem;
+}
+.footer-eye { width: 28px; opacity: 0.25; filter: brightness(10); }
+
+/* ── Tweaks panel ───────────────────────────────────────── */
+#tweaks-panel {
+  display: none;
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 10000;
+  background: #0a0c18;
+  border: 1px solid var(--rule);
+  padding: 1rem 1.25rem;
+  width: 220px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  box-shadow: 0 0 40px rgba(255,170,0,0.08);
+}
+#tweaks-panel h4 {
+  color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 0.75rem; font-size: 0.65rem; font-weight: 500;
+}
+.tweak-row { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; }
+.tweak-row label { color: var(--text-mid); font-size: 0.6rem; letter-spacing: 0.08em; }
+.tweak-row input[type=range] { width: 100%; accent-color: var(--amber); }
+.tweak-row input[type=checkbox] { accent-color: var(--amber); }
+.tweak-row select {
+  background: #0d0f1e; color: var(--text); border: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 0.6rem; padding: 0.2rem 0.4rem; width: 100%;
+}
+
+@media (max-width: 640px) {
+  .hero-h1 { font-size: 2.5rem; }
+  .eye-watermark { width: 240px; right: -30px; opacity: 0.03; }
+  .nav-links { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="hex-field"></div>
+
+<div class="page">
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <div class="hex-badge">
+        <svg viewBox="0 0 36 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="18,1.5 34.5,10.5 34.5,30.5 18,39.5 1.5,30.5 1.5,10.5"
+            fill="rgba(255,170,0,0.07)" stroke="#ffaa00" stroke-width="1.2"/>
+          <polygon points="18,6 30,13 30,28 18,35 6,28 6,13"
+            fill="none" stroke="rgba(255,170,0,0.3)" stroke-width="0.6"/>
+        </svg>
+        <img src="eye-logo.png" alt="eye"/>
+      </div>
+      <span class="nav-name">A. Fiumana</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about">about</a></li>
+      <li><a href="#research">research</a></li>
+      <li><a href="#writing">writing</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="eye-logo.png" class="eye-watermark" alt=""/>
+    <div class="hero-tag">network virtualization · digital twins · metrics</div>
+    <h1 class="hero-h1">Agostino<br><em>Fiumana</em><span class="cursor"></span></h1>
+    <p class="hero-sub">
+      Working at the edges of network virtualization,<br>
+      distributed systems, and orchestration.
+    </p>
+    <div class="hero-badges">
+      <div class="badge"><div class="badge-dot"></div>Télécom Paris — Research Intern</div>
+      <div class="badge">M.Sc. Università di Bologna</div>
+      <div class="badge">Seeking PhD · Fall 2026</div>
+    </div>
+    <div class="status-strip">
+      <strong>Currently:</strong> building multi-purpose observation tooling that exposes metrics for optimization and management in virtualized cloud-native environments.
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="sec-head">
+      <svg class="sec-hex" viewBox="0 0 16 18"><polygon points="8,1 15,4.5 15,13.5 8,17 1,13.5 1,4.5" fill="rgba(255,170,0,0.1)" stroke="#ffaa00" stroke-width="1"/></svg>
+      <span class="sec-num">§ 01</span>
+      <span class="sec-title">About</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="prose">
+      <p>
+        I'm a master's student in Computer Engineering at the <strong>Università di Bologna</strong>, currently on a research internship at <strong>Télécom Paris</strong>. My work sits at the intersection of network virtualization and machine learning — specifically, how we model the behavior of complex cloud-native systems in ways that are faithful, tractable, and actually useful.
+      </p>
+      <p>
+        I firmly believe knowledge is power. In virtualized environments, to know is to observe — my research focuses on building a multi-purpose observation tool that exposes metrics for optimization and management purposes.
+      </p>
+      <p>
+        I'm looking to continue this line of work in a Ph.D. program starting fall 2026.
+      </p>
+    </div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section id="research">
+    <div class="sec-head">
+      <svg class="sec-hex" viewBox="0 0 16 18"><polygon points="8,1 15,4.5 15,13.5 8,17 1,13.5 1,4.5" fill="rgba(255,170,0,0.1)" stroke="#ffaa00" stroke-width="1"/></svg>
+      <span class="sec-num">§ 02</span>
+      <span class="sec-title">Research &amp; Projects</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="projects">
+      <article class="project">
+        <div class="proj-hex-icon">
+          <svg viewBox="0 0 28 32" fill="none">
+            <polygon points="14,1.5 26.5,8.5 26.5,23.5 14,30.5 1.5,23.5 1.5,8.5"
+              fill="rgba(255,170,0,0.08)" stroke="#ffaa00" stroke-width="1.1"/>
+            <text x="14" y="20" text-anchor="middle" fill="#ffaa00" font-size="7" font-family="monospace" font-weight="500">ML</text>
+          </svg>
+        </div>
+        <div class="proj-body">
+          <div class="proj-head">
+            <span class="proj-title">MDN Training for KubeTwin</span>
+            <span class="proj-date">2025 — ongoing</span>
+          </div>
+          <p class="proj-desc">
+            Training Mixture Density Networks on performance traces collected from Kubernetes microservice environments. The goal: a learned component that reproduces the stochastic latency behavior of a live cluster well enough to stand in as a digital twin. Latencies modeled with Weibull output distribution to better capture tail behavior; traces collected via Jaeger with controllable HTTP injection.
+          </p>
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">TensorFlow</span>
+            <span class="tag">TFP</span>
+            <span class="tag">Keras</span>
+            <span class="tag">Kubernetes</span>
+            <span class="tag">Jaeger</span>
+          </div>
+          <div class="proj-links">
+            <a href="https://github.com/AgoStream/MDN-training-Ktwin" target="_blank" rel="noopener">Repository →</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="proj-hex-icon">
+          <svg viewBox="0 0 28 32" fill="none">
+            <polygon points="14,1.5 26.5,8.5 26.5,23.5 14,30.5 1.5,23.5 1.5,8.5"
+              fill="none" stroke="rgba(255,170,0,0.2)" stroke-width="1.1" stroke-dasharray="3,3"/>
+          </svg>
+        </div>
+        <div class="proj-body">
+          <div class="proj-head">
+            <span class="proj-title" style="color:var(--text-mid)">More soon</span>
+            <span class="proj-date">in progress</span>
+          </div>
+          <p class="proj-desc" style="color:var(--text-dim)">
+            Work from my internship at Télécom Paris will be added here as it becomes publishable. Check back, or reach out if you're curious about something specific.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section id="writing">
+    <div class="sec-head">
+      <svg class="sec-hex" viewBox="0 0 16 18"><polygon points="8,1 15,4.5 15,13.5 8,17 1,13.5 1,4.5" fill="rgba(255,170,0,0.1)" stroke="#ffaa00" stroke-width="1"/></svg>
+      <span class="sec-num">§ 03</span>
+      <span class="sec-title">Writing</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="empty-note">
+      Notes and longer writing are on the way. Topics in the queue: performance modeling in distributed systems, the statistics of tail latencies, and what makes an observation tool useful and portable.
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="sec-head">
+      <svg class="sec-hex" viewBox="0 0 16 18"><polygon points="8,1 15,4.5 15,13.5 8,17 1,13.5 1,4.5" fill="rgba(255,170,0,0.1)" stroke="#ffaa00" stroke-width="1"/></svg>
+      <span class="sec-num">§ 04</span>
+      <span class="sec-title">Elsewhere</span>
+      <div class="sec-line"></div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <span class="contact-label">Code</span>
+        <a href="https://github.com/AgoStream" target="_blank" rel="noopener">github.com/AgoStream</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Professional</span>
+        <a href="https://www.linkedin.com/in/agostino-fiumana-5bb086320/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Email</span>
+        <a href="/cdn-cgi/l/email-protection#b5dbd0d0d1d9d0c6c1c7d0d4d88181f5d2d8d4dcd99bd6dad8"><span class="__cf_email__" data-cfemail="711f1414151d1402050314101c454531161c10181d5f121e1c">[email&#160;protected]</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Agostino Fiumana</span>
+    <img src="eye-logo.png" class="footer-eye" alt=""/>
+    <span style="letter-spacing:0.1em">SET IN JETBRAINS MONO</span>
+  </footer>
+</div>
+
+<!-- TWEAKS PANEL -->
+<div id="tweaks-panel">
+  <h4>Tweaks</h4>
+  <div class="tweak-row">
+    <label>Accent color</label>
+    <select onchange="setAccent(this.value)">
+      <option value="#ffaa00">Amber (default)</option>
+      <option value="#00e5ff">Cyan</option>
+      <option value="#7c6ff7">Violet</option>
+      <option value="#00c896">Teal</option>
+      <option value="#ff4d4d">Red</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <label>Hex grid opacity</label>
+    <input type="range" min="0" max="30" value="10" oninput="setHexOpacity(this.value)"/>
+  </div>
+  <div class="tweak-row">
+    <label>Scan lines</label>
+    <input type="checkbox" checked onchange="toggleScanLines(this.checked)"/>
+  </div>
+  <div class="tweak-row">
+    <label>Eye watermark opacity</label>
+    <input type="range" min="0" max="15" value="5" oninput="setEyeOpacity(this.value)"/>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accentColor": "#7c6ff7",
+  "hexOpacity": 12,
+  "scanLines": true,
+  "eyeOpacity": 8
+}/*EDITMODE-END*/;
+
+// Tweaks logic
+function setAccent(v) {
+  document.documentElement.style.setProperty('--amber', v);
+  const rgb = hexToRgb(v);
+  if (rgb) {
+    document.documentElement.style.setProperty('--amber-glow', `rgba(${rgb},0.15)`);
+    document.documentElement.style.setProperty('--amber-soft', `rgba(${rgb},0.06)`);
+    document.documentElement.style.setProperty('--rule', `rgba(${rgb},0.12)`);
+    document.documentElement.style.setProperty('--amber-dim', v);
+  }
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{accentColor:v}}, '*');
+}
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return isNaN(r) ? null : `${r},${g},${b}`;
+}
+function setHexOpacity(v) {
+  document.querySelector('.hex-field').style.opacity = v/100;
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{hexOpacity:Number(v)}}, '*');
+}
+function toggleScanLines(v) {
+  document.body.style.setProperty('--scan-display', v ? 'block' : 'none');
+  // toggle via pseudo class workaround
+  let styleEl = document.getElementById('scan-toggle-style');
+  if (!styleEl) { styleEl = document.createElement('style'); styleEl.id='scan-toggle-style'; document.head.appendChild(styleEl); }
+  styleEl.textContent = v ? '' : 'body::before { display: none !important; }';
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{scanLines:v}}, '*');
+}
+function setEyeOpacity(v) {
+  const wm = document.querySelector('.eye-watermark');
+  if (wm) wm.style.opacity = v/100;
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{eyeOpacity:Number(v)}}, '*');
+}
+
+// Apply saved defaults
+(function applyDefaults() {
+  const d = TWEAK_DEFAULTS;
+  if (d.accentColor !== '#ffaa00') setAccent(d.accentColor);
+  setHexOpacity(d.hexOpacity);
+  toggleScanLines(d.scanLines);
+  setEyeOpacity(d.eyeOpacity);
+  // sync selects/inputs
+  document.querySelector('#tweaks-panel select').value = d.accentColor;
+  document.querySelectorAll('#tweaks-panel input[type=range]')[0].value = d.hexOpacity;
+  document.querySelector('#tweaks-panel input[type=checkbox]').checked = d.scanLines;
+  document.querySelectorAll('#tweaks-panel input[type=range]')[1].value = d.eyeOpacity;
+})();
+
+// Edit mode toggle
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode')   document.getElementById('tweaks-panel').style.display = 'block';
+  if (e.data?.type === '__deactivate_edit_mode') document.getElementById('tweaks-panel').style.display = 'none';
+});
+window.parent.postMessage({type: '__edit_mode_available'}, '*');
+</script>
+
+</body>
+</html>
