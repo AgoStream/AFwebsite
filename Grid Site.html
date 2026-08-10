@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Agostino Fiumana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root[data-mode="light"]{
+  --bg:#ffffff; --ink:#111318; --soft:#3c4048; --muted:#8b8f98; --rule:#e6e7ea; --accent:#1a46d6;
+}
+:root[data-mode="dark"]{
+  --bg:#0f1115; --ink:#e8e9ec; --soft:#adb1b9; --muted:#6b6f78; --rule:#242730; --accent:#6f92ff;
+}
+
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Libre Franklin",system-ui,sans-serif;
+  font-size:19px; line-height:1.62; font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh; display:flex; flex-direction:column;
+  transition:background .35s ease,color .35s ease;
+}
+::selection{background:var(--accent);color:#fff}
+a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule);transition:color .2s,border-color .2s}
+a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ===== top bar ===== */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:2rem;
+  padding:1.1rem 2.5rem;
+  border-bottom:1px solid var(--rule);
+  background:color-mix(in srgb,var(--bg) 90%,transparent);
+  backdrop-filter:blur(12px);
+}
+.brand{font-size:.9rem;font-weight:700;letter-spacing:-.01em;border:none}
+.brand:hover{color:var(--accent)}
+.menu{display:flex;gap:.35rem;margin-left:.5rem}
+.menu button{
+  font-family:inherit;font-size:.7rem;text-transform:uppercase;letter-spacing:.13em;
+  color:var(--muted);background:none;border:none;cursor:pointer;
+  padding:.45rem .75rem;border-radius:2px;transition:color .2s,background .2s;
+}
+.menu button:hover{color:var(--ink)}
+.menu button[aria-current="true"]{color:var(--accent)}
+.mode-toggle{
+  margin-left:auto;display:flex;align-items:center;gap:.5rem;
+  background:none;border:1px solid var(--rule);color:var(--soft);
+  font-family:inherit;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+  padding:.42rem .65rem;border-radius:2px;cursor:pointer;transition:all .2s;
+}
+.mode-toggle:hover{color:var(--ink);border-color:var(--muted)}
+.mode-toggle .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+
+/* ===== content ===== */
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:3.5rem 2.5rem}
+.view{display:none;max-width:820px;width:100%;animation:fade .45s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* about */
+.eyebrow{font-size:.68rem;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:1.4rem}
+.bigname{font-size:clamp(3rem,10vw,6.5rem);font-weight:800;letter-spacing:-.03em;line-height:.94;margin-bottom:1.8rem}
+.bigname em{font-style:normal;color:var(--accent)}
+.prose p{margin-bottom:1rem;color:var(--soft);max-width:60ch;font-size:1.05rem}
+.prose p:last-child{margin-bottom:0}
+.prose strong{color:var(--ink);font-weight:600}
+.status{margin-top:2rem;font-size:.9rem;color:var(--muted);line-height:1.55;max-width:52ch}
+.status .k{color:var(--accent);font-weight:600}
+
+/* view heading (research/writing/contact) */
+.view-h{font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.02em;margin-bottom:2rem;line-height:1.05}
+.view-h em{font-style:normal;color:var(--accent)}
+
+.project{padding:1.5rem 0;border-bottom:1px solid var(--rule)}
+.project:first-of-type{border-top:1px solid var(--rule)}
+.proj-head{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:.55rem}
+.project h3{font-size:1.2rem;font-weight:600}
+.proj-meta{font-size:.72rem;color:var(--muted);letter-spacing:.02em}
+.proj-desc{color:var(--soft);margin-bottom:.85rem;max-width:64ch;font-size:.98rem}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem}
+.tag{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border:1px solid var(--rule);padding:.22rem .55rem;border-radius:2px}
+.proj-links{margin-top:.85rem;font-size:.9rem}
+
+.note{padding:1.2rem 1.4rem;border-left:2px solid var(--accent);color:var(--muted);font-size:.98rem;max-width:64ch}
+
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.4rem 2rem}
+.contact-item{display:flex;flex-direction:column;gap:.3rem}
+.contact-item .k{font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.contact-item a{font-size:1rem;border:none;color:var(--soft)}
+.contact-item a:hover{color:var(--accent)}
+
+@media(max-width:640px){
+  .topbar{padding:.9rem 1.3rem;gap:1rem;flex-wrap:wrap}
+  .menu{margin-left:0;order:3;width:100%;justify-content:space-between}
+  .menu button{padding:.4rem .35rem}
+  .stage{padding:2.5rem 1.4rem}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="brand" data-go="about">Agostino Fiumana</a>
+  <nav class="menu">
+    <button data-go="about" aria-current="true">About</button>
+    <button data-go="research">Research</button>
+    <button data-go="writing">Writing</button>
+    <button data-go="contact">Contact</button>
+  </nav>
+  <button class="mode-toggle" id="modeBtn"><span class="dot"></span><span id="modeLbl">Dark</span></button>
+</header>
+
+<main class="stage">
+
+  <!-- ABOUT -->
+  <section class="view active" id="about">
+    <div class="eyebrow">Network virtualization · digital twins · metrics extraction</div>
+    <h1 class="bigname">Agostino<br><em>Fiumana</em></h1>
+    <div class="prose">
+      <p>I'm a master's student in Computer Engineering at the <strong>Università di Bologna</strong>, currently on a research internship at <strong>Télécom Paris</strong>. My work sits at the intersection of network virtualization and machine learning — how we model the behaviour of complex cloud-native systems in ways that are faithful, tractable, and actually useful.</p>
+      <p>I firmly believe knowledge is power. In virtualized environments, to know is to observe — my research focuses on building a multi-purpose observation tool that exposes metrics for optimization and management.</p>
+    </div>
+    <p class="status"><span class="k">Currently</span> — research intern at Télécom Paris, completing my M.Sc. at the Università di Bologna. Seeking a Ph.D. programme starting fall 2026.</p>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="view" id="research">
+    <h2 class="view-h">Research &amp; <em>Projects</em></h2>
+    <article class="project">
+      <div class="proj-head"><h3>MDN Training for KubeTwin</h3><span class="proj-meta">2025 — ongoing</span></div>
+      <p class="proj-desc">Training Mixture Density Networks on performance traces collected from Kubernetes microservice environments. The goal: a learned component that reproduces the stochastic latency behaviour of a live cluster well enough to stand in as a digital twin. Latencies are modeled with a Weibull output distribution to better capture tail behaviour; traces are collected via Jaeger with controllable HTTP injection.</p>
+      <div class="tags"><span class="tag">Python</span><span class="tag">TensorFlow</span><span class="tag">TFP</span><span class="tag">Keras</span><span class="tag">Kubernetes</span><span class="tag">Jaeger</span></div>
+      <div class="proj-links"><a href="https://github.com/AgoStream/MDN-training-Ktwin" target="_blank" rel="noopener">Repository →</a></div>
+    </article>
+    <article class="project">
+      <div class="proj-head"><h3>More soon</h3><span class="proj-meta">in progress</span></div>
+      <p class="proj-desc">Work from my internship at Télécom Paris will be added here as it becomes publishable. Reach out if you're curious about something specific.</p>
+    </article>
+  </section>
+
+  <!-- WRITING -->
+  <section class="view" id="writing">
+    <h2 class="view-h"><em>Writing</em></h2>
+    <p class="note">Notes and longer writing are on the way. In the queue: performance modeling in distributed systems, the statistics of tail latencies, and what makes an observation tool useful and portable.</p>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="view" id="contact">
+    <h2 class="view-h"><em>Elsewhere</em></h2>
+    <div class="contact-grid">
+      <div class="contact-item"><span class="k">Code</span><a href="https://github.com/AgoStream" target="_blank" rel="noopener">github.com/AgoStream</a></div>
+      <div class="contact-item"><span class="k">Professional</span><a href="https://www.linkedin.com/in/agostino-fiumana-5bb086320/" target="_blank" rel="noopener">LinkedIn</a></div>
+      <div class="contact-item"><span class="k">Email</span><a href="mailto:needlestream44@gmail.com">needlestream44@gmail.com</a></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const root=document.documentElement;
+
+/* view routing */
+function go(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));
+  document.querySelectorAll('.menu button').forEach(b=>b.setAttribute('aria-current',b.dataset.go===id));
+  if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+}
+document.querySelectorAll('[data-go]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();go(el.dataset.go)}));
+const start=(location.hash||'#about').slice(1);
+go(document.getElementById(start)?start:'about');
+
+/* dark mode */
+const btn=document.getElementById('modeBtn'),lbl=document.getElementById('modeLbl');
+function setMode(m){root.dataset.mode=m;lbl.textContent=m==='dark'?'Light':'Dark';try{localStorage.setItem('af-mode',m)}catch(e){}}
+btn.addEventListener('click',()=>setMode(root.dataset.mode==='dark'?'light':'dark'));
+let m='light';try{m=localStorage.getItem('af-mode')||'light'}catch(e){}setMode(m);
+</script>
+</body>
+</html>
